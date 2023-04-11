@@ -1,7 +1,6 @@
 import requests
 import tarfile
 import os
-import zipfile
 from zipfile import ZipFile
 import argparse
 
@@ -18,7 +17,7 @@ def get_source(query_response: dict) -> str:
     for url in source_list:
         if 'tar.gz' in url:
             return url
-        return source_list[-1]
+    return source_list[-1]
 
 
 def get_package(package_address: str) -> str:
