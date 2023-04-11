@@ -57,7 +57,7 @@ def run() -> None:
             tar = tarfile.open(file_loc)
             tar.extractall(members=tar_py_files(tar))
             tar.close()
-        if file_loc.endswith('.whl'):
+        elif file_loc.endswith('.whl'):
             with ZipFile(file_loc) as whl_zip:
                 zip_members = [my_member for my_member in whl_zip.namelist() if my_member.endswith('.py')]
                 whl_zip.extractall(members=zip_members)
