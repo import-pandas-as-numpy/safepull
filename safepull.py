@@ -42,7 +42,7 @@ class Distribution:
 
 @dataclass
 class Package:
-    """Dataclass containing package PyPI metadata."""
+    """Dataclass containing PyPI package metadata."""
     name: str
     summary: str
     author: str
