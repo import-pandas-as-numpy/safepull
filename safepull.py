@@ -1,4 +1,5 @@
 #!/usr/bin/python3.10
+
 from typing import Iterator
 
 import requests
