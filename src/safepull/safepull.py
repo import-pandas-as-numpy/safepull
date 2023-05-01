@@ -1,4 +1,3 @@
-#!/usr/bin/python3.10
 from typing import Iterator
 
 import requests
@@ -141,7 +140,3 @@ def run() -> None:
             sdist = user_package.get_distributions()[0]
         file_name = sdist.download_package()
         unpack(file_name)
-
-
-if __name__ == '__main__':
-    run()
