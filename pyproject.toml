@@ -1,0 +1,19 @@
+[project]
+name = "safepull"
+version = "1.0.0"
+description = "A quick and dirty command-line script to pull down and extract .py files out of tarballs and wheels without interfacing with the setup.py file."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests~=2.28.2",
+]
+
+[project.urls]
+repository = "https://github.com/import-pandas-as-numpy/safepull/"
+
+[project.scripts]
+safepull = "safepull.safepull:run"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
