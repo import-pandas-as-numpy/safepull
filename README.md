@@ -16,7 +16,7 @@ Safepull has three command line arguments.
 
 `-f --force` will attempt to download the sdist of a particular package without prompt. 
 
-`-m --metadata` will return the package name, description, and author of a partiuclar package.
+`-m --metadata` will return the package name, description, and author of a particular package.
 
 ```
 rem@rembox:~$ safepull -p numpy
