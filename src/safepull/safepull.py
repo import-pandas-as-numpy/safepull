@@ -102,7 +102,7 @@ def unpack(file_loc: str) -> None:
 def run() -> None:
     parser = argparse.ArgumentParser(prog="Safepull",
                                      description="Extracts a package to the CWD without interfacing with setup.py")
-    parser.add_argument('-p', '--package', help='Package title to be downloaded.')
+    parser.add_argument('package', help='Package title to be downloaded.')
     parser.add_argument('-f', '--force', action='store_true', help='Automatically selects a download URL.')
     parser.add_argument('-m', '--metadata', action='store_true', help='Displays metadata on a package.')
     args = parser.parse_args()
