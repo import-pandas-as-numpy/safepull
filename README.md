@@ -12,14 +12,14 @@ Safepull is available on PyPI.
 # Usage Instructions
 Safepull has three command line arguments.
 
-`-p --package <packagename>` is required. When force is not specified, you will be prompted for a distribution type to download.
+Positional argument `<packagename>` is required. When force is not specified, you will be prompted for a distribution type to download.
 
 `-f --force` will attempt to download the sdist of a particular package without prompt. 
 
 `-m --metadata` will return the package name, description, and author of a particular package.
 
 ```
-rem@rembox:~$ safepull -p numpy
+rem@rembox:~$ safepull numpy
 numpy 1.24.3
 Fundamental package for array computing in Python
 Author: Travis E. Oliphant et al.
