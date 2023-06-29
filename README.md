@@ -2,7 +2,7 @@
 
 A quick and dirty command-line script to pull down and extract .py files out of tarballs and wheels without interfacing
 with the setup.py file. This is a targeted replacement for `pip download <package>` to prevent malware detonation within
-setup.py files. 
+setup.py files.
 
 # Installation Instructions
 Safepull is available on PyPI.
@@ -14,7 +14,7 @@ Safepull has three command line arguments.
 
 Positional argument `<packagename>` is required. When force is not specified, you will be prompted for a distribution type to download.
 
-`-f --force` will attempt to download the sdist of a particular package without prompt. 
+`-f --force` will attempt to download the sdist of a particular package without prompt.
 
 `-m --metadata` will return the package name, description, and author of a particular package.
 
