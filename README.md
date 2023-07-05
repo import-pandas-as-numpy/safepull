@@ -1,7 +1,6 @@
 # safepull
 
-A quick and dirty command-line script to pull down and extract .py files out of tarballs and wheels without interfacing
-with the setup.py file. This is a targeted replacement for `pip download <package>` to prevent malware detonation within
+Safepull is a command line tool to interact with PyPI's package indexing to safely download and extract files. This is a targeted replacement for `pip download <package>` to prevent malware detonation within
 setup.py files.
 
 # Installation Instructions
@@ -10,7 +9,7 @@ Safepull is available on PyPI.
 `pip install safepull`
 
 # Usage Instructions
-Safepull has three command line arguments.
+Safepull has four command line arguments.
 
 Positional argument `<packagename>` is required. When force is not specified, you will be prompted for a distribution type to download.
 
