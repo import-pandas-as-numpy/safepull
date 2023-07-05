@@ -16,7 +16,10 @@ Positional argument `<packagename>` is required. When force is not specified, yo
 
 `-f --force` will attempt to download the sdist of a particular package without prompt.
 
+`-v --version` will attempt to download a specific version of a particular package.
+
 `-m --metadata` will return the package name, description, and author of a particular package.
+
 
 ```
 rem@rembox:~$ safepull numpy

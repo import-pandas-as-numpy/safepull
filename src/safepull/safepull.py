@@ -1,70 +1,12 @@
-from typing import Iterator
-
 import requests
 import tarfile
 import os
 from zipfile import ZipFile
 import argparse
-from dataclasses import dataclass
+from .models import Distribution, Package
+from .exceptions import PackageNotFound
 
 HOST = "https://pypi.org"
-
-
-@dataclass
-class Distribution:
-    """Dataclass containing distribution information for a PyPI package."""
-
-    filename: str
-    packagetype: str
-    url: str
-    size: int
-
-    @classmethod
-    def from_dict(cls, releases: dict):
-        return cls(
-            filename=releases["filename"],
-            packagetype=releases["packagetype"],
-            url=releases["url"],
-            size=releases["size"],
-        )
-
-    def download_package(self) -> str:
-        r = requests.get(self.url, stream=True)
-        with open(f"{self.filename}", "wb") as fd:
-            for chunk in r.iter_content(chunk_size=128):
-                fd.write(chunk)
-        return self.filename
-
-    def get_metadata(self) -> tuple[str, str, str, str]:
-        return (
-            f"Filename: {self.filename}",
-            f"Package Type: {self.packagetype}",
-            f"URL: {self.url}",
-            f"Size: {self.size / (1 << 20):,.0f}MB",
-        )
-
-
-@dataclass
-class Package:
-    """Dataclass containing PyPI package metadata."""
-
-    name: str
-    summary: str
-    author: str
-    version: str
-    distributions: list[Distribution]
-
-    def get_metadata(self) -> tuple[str, str, str]:
-        return (f"{self.name} {self.version}", self.summary, f"Author: {self.author}")
-
-    def get_distributions(self) -> list[Distribution]:
-        return self.distributions
-
-    def get_sdist(self) -> Distribution | None:
-        for distro in self.distributions:
-            if distro.packagetype == "sdist":
-                return distro
-        return None
 
 
 def query_package(package_title: str, version: str | None = None) -> Package:
@@ -72,26 +14,19 @@ def query_package(package_title: str, version: str | None = None) -> Package:
         response = requests.get(f"{HOST}/pypi/{package_title}/{version}/json").json()
     else:
         response = requests.get(f"{HOST}/pypi/{package_title}/json").json()
-    return Package(
-        name=response["info"]["name"],
-        summary=response["info"]["summary"],
-        author=response["info"]["author"],
-        version=response["info"]["version"],
-        distributions=[
-            Distribution.from_dict(releases) for releases in response["urls"]
-        ],
-    )
-
-
-def tar_py_files(members: tarfile.TarFile) -> Iterator[tarfile.TarInfo]:
-    """Generator function to yield .py file members in tarballs.
-    Arguments:
-    members -- a tarfile to iterate over.
-    Yields:
-    childinfo -- a tarinfo object with a .py suffix."""
-    for childinfo in members:
-        if os.path.splitext(childinfo.name)[1] == ".py":
-            yield childinfo
+    try:
+        my_package = Package(
+            name=response["info"]["name"],
+            summary=response["info"]["summary"],
+            author=response["info"]["author"],
+            version=response["info"]["version"],
+            distributions=[
+                Distribution.from_dict(releases) for releases in response["urls"]
+            ],
+        )
+    except KeyError:
+        raise PackageNotFound(package_title, version)
+    return my_package
 
 
 def unpack(file_loc: str) -> None:
@@ -101,16 +36,11 @@ def unpack(file_loc: str) -> None:
     """
     if file_loc.endswith(".tar.gz"):
         tar = tarfile.open(file_loc)
-        tar.extractall(members=tar_py_files(tar))
+        tar.extractall()
         tar.close()
-    if file_loc.endswith(".whl"):
+    if file_loc.endswith((".whl", ".zip")):
         with ZipFile(file_loc) as whl_zip:
-            zip_members = [
-                my_member
-                for my_member in whl_zip.namelist()
-                if my_member.endswith(".py")
-            ]
-            whl_zip.extractall(members=zip_members)
+            whl_zip.extractall()
     os.remove(file_loc)
 
 
