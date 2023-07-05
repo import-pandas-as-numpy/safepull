@@ -42,7 +42,7 @@ def unpack(file_loc: str) -> None:
     """Unpack a compressed file into the CWD, and remove the compressed file."""
     if file_loc.endswith(".tar.gz"):
         tar = tarfile.open(file_loc)
-        tar.extractall()
+        tar.extractall(filter="data")
         tar.close()
     if file_loc.endswith((".whl", ".zip")):
         with ZipFile(file_loc) as whl_zip:
