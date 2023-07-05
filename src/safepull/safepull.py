@@ -1,19 +1,28 @@
-import requests
-import tarfile
-import os
-from zipfile import ZipFile
+"""Safepull module for the safe handling of compressed Python scripts."""
+# ruff: noqa: T201
+
 import argparse
+import tarfile
+from pathlib import Path
+from zipfile import ZipFile
+
+import requests
+
+from .exceptions import PackageNotFoundError
 from .models import Distribution, Package
-from .exceptions import PackageNotFound
 
 HOST = "https://pypi.org"
 
 
 def query_package(package_title: str, version: str | None = None) -> Package:
+    """Query PyPI for a package."""
     if version:
-        response = requests.get(f"{HOST}/pypi/{package_title}/{version}/json").json()
+        response = requests.get(
+            f"{HOST}/pypi/{package_title}/{version}/json",
+            timeout=60,
+        ).json()
     else:
-        response = requests.get(f"{HOST}/pypi/{package_title}/json").json()
+        response = requests.get(f"{HOST}/pypi/{package_title}/json", timeout=60).json()
     try:
         my_package = Package(
             name=response["info"]["name"],
@@ -24,16 +33,13 @@ def query_package(package_title: str, version: str | None = None) -> Package:
                 Distribution.from_dict(releases) for releases in response["urls"]
             ],
         )
-    except KeyError:
-        raise PackageNotFound(package_title, version)
+    except KeyError as e:
+        raise PackageNotFoundError(package_title, version) from e
     return my_package
 
 
 def unpack(file_loc: str) -> None:
-    """Unpack a .tar.gz or .whl file into the CWD, and remove the compressed file.
-    Arguments:
-    file_loc -- the file title of a tarball or wheel in the current working directory.
-    """
+    """Unpack a compressed file into the CWD, and remove the compressed file."""
     if file_loc.endswith(".tar.gz"):
         tar = tarfile.open(file_loc)
         tar.extractall()
@@ -41,17 +47,20 @@ def unpack(file_loc: str) -> None:
     if file_loc.endswith((".whl", ".zip")):
         with ZipFile(file_loc) as whl_zip:
             whl_zip.extractall()
-    os.remove(file_loc)
+    Path(file_loc).unlink()
 
 
 def run() -> None:
+    """Run the program."""
     parser = argparse.ArgumentParser(
         prog="Safepull",
         description="Extracts a package to the CWD without interfacing with setup.py",
     )
     parser.add_argument("package", help="Package title to be downloaded.")
     parser.add_argument(
-        "-v", "--version", help="Version of a package to be downloaded."
+        "-v",
+        "--version",
+        help="Version of a package to be downloaded.",
     )
     parser.add_argument(
         "-f",
@@ -60,7 +69,10 @@ def run() -> None:
         help="Automatically selects a download URL.",
     )
     parser.add_argument(
-        "-m", "--metadata", action="store_true", help="Displays metadata on a package."
+        "-m",
+        "--metadata",
+        action="store_true",
+        help="Displays metadata on a package.",
     )
     args = parser.parse_args()
 
