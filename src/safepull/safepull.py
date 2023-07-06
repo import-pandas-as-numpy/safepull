@@ -9,7 +9,7 @@ from zipfile import ZipFile
 import requests
 
 from .exceptions import PackageNotFoundError
-from .models import Distribution, Package
+from .models import Package
 
 HOST = "https://pypi.org"
 
@@ -24,15 +24,7 @@ def query_package(package_title: str, version: str | None = None) -> Package:
     else:
         response = requests.get(f"{HOST}/pypi/{package_title}/json", timeout=60).json()
     try:
-        my_package = Package(
-            name=response["info"]["name"],
-            summary=response["info"]["summary"],
-            author=response["info"]["author"],
-            version=response["info"]["version"],
-            distributions=[
-                Distribution.from_dict(releases) for releases in response["urls"]
-            ],
-        )
+        my_package = Package.from_dict(response)
     except KeyError as e:
         raise PackageNotFoundError(package_title, version) from e
     return my_package

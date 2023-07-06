@@ -18,7 +18,7 @@ class Distribution:
 
     @classmethod
     def from_dict(cls: type[Self], releases: dict) -> Self:
-        """Distribution factory."""
+        """Create a distribution from JSON."""
         return cls(
             filename=releases["filename"],
             packagetype=releases["packagetype"],
@@ -53,6 +53,19 @@ class Package:
     author: str
     version: str
     distributions: list[Distribution]
+
+    @classmethod
+    def from_dict(cls: type[Self], package_dict: dict) -> Self:
+        """Create a Package class from JSON."""
+        return cls(
+            name=package_dict["info"]["name"],
+            summary=package_dict["info"]["summary"],
+            author=package_dict["info"]["author"],
+            version=package_dict["info"]["version"],
+            distributions=[
+                Distribution.from_dict(releases) for releases in package_dict["urls"]
+            ],
+        )
 
     def get_metadata(self: Self) -> tuple[str, str, str]:
         """Return pertinent metadata for the package."""
