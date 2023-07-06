@@ -7,6 +7,7 @@ from io import BytesIO
 from zipfile import ZipFile
 
 import requests
+from rich.console import Console
 
 from .exceptions import PackageNotFoundError
 from .models import Package
@@ -42,6 +43,7 @@ def unpack(byte_object: BytesIO, filename: str) -> None:
 
 def run() -> None:
     """Run the program."""
+    console = Console()
     parser = argparse.ArgumentParser(
         prog="Safepull",
         description="Extracts a package to the CWD without interfacing with setup.py",
@@ -71,13 +73,12 @@ def run() -> None:
         use_in = input("Input a package title: ")
 
     user_package = query_package(use_in, args.version)
-    print(*user_package.get_metadata(), sep="\n")
     if args.metadata:
+        print(*user_package.get_metadata(), sep="\n")
         return
     if not args.force:
         if len(distribution_list := user_package.get_distributions()) > 1:
-            for idx, distros in enumerate(distribution_list):
-                print(f"--{idx}--", *distros.get_metadata(), sep="\n")
+            console.print(user_package.table_print())
             while True:
                 use_select = int(input("Enter the index of a package to download: "))
                 byteobject, file_name = distribution_list[use_select].download_package()
