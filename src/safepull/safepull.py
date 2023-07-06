@@ -33,9 +33,8 @@ def query_package(package_title: str, version: str | None = None) -> Package:
 def unpack(byte_object: BytesIO, filename: str) -> None:
     """Unpack a compressed file into the CWD."""
     if filename.endswith(".tar.gz"):
-        sdist_tar = tarfile.open(fileobj=byte_object)
-        sdist_tar.extractall(filter="data")
-        sdist_tar.close()
+        with tarfile.open(fileobj=byte_object) as sdist_tar:
+            sdist_tar.extractall(filter="data")
     if filename.endswith((".whl", ".zip")):
         with ZipFile(byte_object) as whl_zip:
             whl_zip.extractall()
