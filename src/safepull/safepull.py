@@ -3,13 +3,13 @@
 
 import argparse
 import tarfile
-from pathlib import Path
+from io import BytesIO
 from zipfile import ZipFile
 
 import requests
 
 from .exceptions import PackageNotFoundError
-from .models import Distribution, Package
+from .models import Package
 
 HOST = "https://pypi.org"
 
@@ -24,30 +24,20 @@ def query_package(package_title: str, version: str | None = None) -> Package:
     else:
         response = requests.get(f"{HOST}/pypi/{package_title}/json", timeout=60).json()
     try:
-        my_package = Package(
-            name=response["info"]["name"],
-            summary=response["info"]["summary"],
-            author=response["info"]["author"],
-            version=response["info"]["version"],
-            distributions=[
-                Distribution.from_dict(releases) for releases in response["urls"]
-            ],
-        )
+        my_package = Package.from_dict(response)
     except KeyError as e:
         raise PackageNotFoundError(package_title, version) from e
     return my_package
 
 
-def unpack(file_loc: str) -> None:
-    """Unpack a compressed file into the CWD, and remove the compressed file."""
-    if file_loc.endswith(".tar.gz"):
-        tar = tarfile.open(file_loc)
-        tar.extractall(filter="data")
-        tar.close()
-    if file_loc.endswith((".whl", ".zip")):
-        with ZipFile(file_loc) as whl_zip:
+def unpack(byte_object: BytesIO, filename: str) -> None:
+    """Unpack a compressed file into the CWD."""
+    if filename.endswith(".tar.gz"):
+        with tarfile.open(fileobj=byte_object) as sdist_tar:
+            sdist_tar.extractall(filter="data")
+    if filename.endswith((".whl", ".zip")):
+        with ZipFile(byte_object) as whl_zip:
             whl_zip.extractall()
-    Path(file_loc).unlink()
 
 
 def run() -> None:
@@ -90,12 +80,9 @@ def run() -> None:
                 print(f"--{idx}--", *distros.get_metadata(), sep="\n")
             while True:
                 use_select = int(input("Enter the index of a package to download: "))
-                try:
-                    file_name = distribution_list[use_select].download_package()
-                    unpack(file_name)
-                    break
-                except (KeyError, TypeError, IndexError):
-                    print("Invalid Selection.")
+                byteobject, file_name = distribution_list[use_select].download_package()
+                unpack(byteobject, file_name)
+                break
         else:
             distros = user_package.get_distributions()
             print(*distros[0].get_metadata())
