@@ -3,7 +3,7 @@
 
 import argparse
 import tarfile
-from pathlib import Path
+from io import BytesIO
 from zipfile import ZipFile
 
 import requests
@@ -30,16 +30,15 @@ def query_package(package_title: str, version: str | None = None) -> Package:
     return my_package
 
 
-def unpack(file_loc: str) -> None:
+def unpack(byte_object: BytesIO, filename: str) -> None:
     """Unpack a compressed file into the CWD, and remove the compressed file."""
-    if file_loc.endswith(".tar.gz"):
-        tar = tarfile.open(file_loc)
-        tar.extractall(filter="data")
-        tar.close()
-    if file_loc.endswith((".whl", ".zip")):
-        with ZipFile(file_loc) as whl_zip:
+    if filename.endswith(".tar.gz"):
+        sdist_tar = tarfile.open(fileobj=byte_object)
+        sdist_tar.extractall(filter="data")
+        sdist_tar.close()
+    if filename.endswith((".whl", ".zip")):
+        with ZipFile(byte_object) as whl_zip:
             whl_zip.extractall()
-    Path(file_loc).unlink()
 
 
 def run() -> None:
@@ -82,12 +81,9 @@ def run() -> None:
                 print(f"--{idx}--", *distros.get_metadata(), sep="\n")
             while True:
                 use_select = int(input("Enter the index of a package to download: "))
-                try:
-                    file_name = distribution_list[use_select].download_package()
-                    unpack(file_name)
-                    break
-                except (KeyError, TypeError, IndexError):
-                    print("Invalid Selection.")
+                byteobject, file_name = distribution_list[use_select].download_package()
+                unpack(byteobject, file_name)
+                break
         else:
             distros = user_package.get_distributions()
             print(*distros[0].get_metadata())

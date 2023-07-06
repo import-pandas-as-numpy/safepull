@@ -1,7 +1,7 @@
 """Class models used by Safepull."""
 
 from dataclasses import dataclass
-from pathlib import Path
+from io import BytesIO
 from typing import Self
 
 import requests
@@ -26,13 +26,10 @@ class Distribution:
             size=releases["size"],
         )
 
-    def download_package(self: Self) -> str:
+    def download_package(self: Self) -> tuple[BytesIO, str]:
         """Download a compressed package to the current working directory."""
-        r = requests.get(self.url, stream=True, timeout=60)
-        with Path(self.filename).open(mode="wb") as fd:
-            for chunk in r.iter_content(chunk_size=128):
-                fd.write(chunk)
-        return self.filename
+        r = BytesIO(requests.get(self.url, stream=True, timeout=60).content)
+        return r, self.filename
 
     def get_metadata(self: Self) -> tuple[str, str, str, str]:
         """Return the metadata for a specific distribution of a package."""
