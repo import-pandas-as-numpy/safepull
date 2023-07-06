@@ -27,7 +27,7 @@ class Distribution:
         )
 
     def download_package(self: Self) -> tuple[BytesIO, str]:
-        """Download a compressed package to the current working directory."""
+        """Download a compressed package."""
         r = BytesIO(requests.get(self.url, stream=True, timeout=60).content)
         return r, self.filename
 
