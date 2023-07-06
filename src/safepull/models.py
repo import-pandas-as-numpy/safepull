@@ -5,6 +5,7 @@ from io import BytesIO
 from typing import Self
 
 import requests
+from rich.table import Table
 
 
 @dataclass
@@ -78,3 +79,21 @@ class Package:
             if distro.packagetype == "sdist":
                 return distro
         return None
+
+    def table_print(self: Self) -> Table:
+        """Rich table printing for distribution information."""
+        table = Table(
+            title=f"{self.name} v.{self.version}\nAuthor: {self.author}\n{self.summary}",
+        )  # ruff: noqa: E501
+        table.add_column("Index")
+        table.add_column("Filename")
+        table.add_column("Package Type")
+        table.add_column("Size (MB)")
+        for ind, entries in enumerate(self.distributions):
+            table.add_row(
+                str(ind),
+                entries.filename,
+                entries.packagetype,
+                f"{entries.size / (1 << 20):,.2f}",
+            )
+        return table
