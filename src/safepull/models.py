@@ -27,12 +27,12 @@ class Distribution:
             size=releases["size"],
         )
 
-    def download_package(self: Self) -> tuple[BytesIO, str]:
+    def download_package(self) -> tuple[BytesIO, str]:
         """Download a compressed package."""
         r = BytesIO(requests.get(self.url, stream=True, timeout=60).content)
         return r, self.filename
 
-    def get_metadata(self: Self) -> tuple[str, str, str, str]:
+    def get_metadata(self) -> tuple[str, str, str, str]:
         """Return the metadata for a specific distribution of a package."""
         return (
             f"Filename: {self.filename}",
@@ -65,22 +65,22 @@ class Package:
             ],
         )
 
-    def get_metadata(self: Self) -> tuple[str, str, str]:
+    def get_metadata(self) -> tuple[str, str, str]:
         """Return pertinent metadata for the package."""
         return f"{self.name} {self.version}", self.summary, f"Author: {self.author}"
 
-    def get_distributions(self: Self) -> list[Distribution]:
+    def get_distributions(self) -> list[Distribution]:
         """Return a list of distributions."""
         return self.distributions
 
-    def get_sdist(self: Self) -> Distribution | None:
+    def get_sdist(self) -> Distribution | None:
         """Extract the source distribution if it exists."""
         for distro in self.distributions:
             if distro.packagetype == "sdist":
                 return distro
         return None
 
-    def table_print(self: Self) -> Table:
+    def table_print(self) -> Table:
         """Rich table printing for distribution information."""
         table = Table(
             title=f"{self.name} v.{self.version}\nAuthor: {self.author}\n{self.summary}",
