@@ -1,8 +1,6 @@
 """Class models used by Safepull."""
-
 from dataclasses import dataclass
 from io import BytesIO
-from typing import Self
 
 import requests
 from rich.table import Table
@@ -18,7 +16,7 @@ class Distribution:
     size: int
 
     @classmethod
-    def from_dict(cls: type[Self], releases: dict) -> Self:
+    def from_dict(cls, releases: dict):
         """Create a distribution from JSON."""
         return cls(
             filename=releases["filename"],
@@ -53,7 +51,7 @@ class Package:
     distributions: list[Distribution]
 
     @classmethod
-    def from_dict(cls: type[Self], package_dict: dict) -> Self:
+    def from_dict(cls, package_dict: dict):
         """Create a Package class from JSON."""
         return cls(
             name=package_dict["info"]["name"],
