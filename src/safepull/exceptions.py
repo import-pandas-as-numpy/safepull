@@ -1,7 +1,5 @@
 """Exceptions raised by Safepull."""
 
-from typing import Self
-
 
 class PackageNotFoundError(Exception):
     """Raised when a package is not found.
@@ -10,7 +8,7 @@ class PackageNotFoundError(Exception):
     parsing the JSON response.
     """
 
-    def __init__(self: Self, package_title: str, package_version: str | None) -> None:
+    def __init__(self, package_title: str, package_version: str | None) -> None:
         """Initialize the superclass with the appropriate information."""
         self.package_title = package_title
         self.package_version = package_version
