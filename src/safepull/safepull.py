@@ -9,7 +9,6 @@ from zipfile import ZipFile
 import requests
 from rich.console import Console
 
-from .exceptions import PackageNotFoundError
 from .models import Package
 
 HOST = "https://pypi.org"
@@ -21,21 +20,28 @@ def query_package(package_title: str, version: str | None = None) -> Package:
         response = requests.get(
             f"{HOST}/pypi/{package_title}/{version}/json",
             timeout=60,
-        ).json()
+        )
     else:
-        response = requests.get(f"{HOST}/pypi/{package_title}/json", timeout=60).json()
-    try:
-        my_package = Package.from_dict(response)
-    except KeyError as e:
-        raise PackageNotFoundError(package_title, version) from e
-    return my_package
+        response = requests.get(f"{HOST}/pypi/{package_title}/json", timeout=60)
+    response.raise_for_status()
+    return Package.from_dict(response.json())
 
 
 def unpack(byte_object: BytesIO, filename: str) -> None:
     """Unpack a compressed file into the CWD."""
     if filename.endswith(".tar.gz"):
         with tarfile.open(fileobj=byte_object) as sdist_tar:
-            sdist_tar.extractall(filter="data")
+            if hasattr(tarfile, "data_filter"):
+                sdist_tar.extractall(filter="data")
+            else:
+                print(
+                    "You do not have data filters enabled for your Python version.",
+                    "This is a security risk. Please update Python.",
+                    "For more information: https://directorytraversal.zip",
+                    sep="\n",
+                )
+                if input('To ignore this, enter "Y": ').upper() == "Y":
+                    sdist_tar.extractall()
     if filename.endswith((".whl", ".zip")):
         with ZipFile(byte_object) as whl_zip:
             whl_zip.extractall()
