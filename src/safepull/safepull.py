@@ -31,7 +31,17 @@ def unpack(byte_object: BytesIO, filename: str) -> None:
     """Unpack a compressed file into the CWD."""
     if filename.endswith(".tar.gz"):
         with tarfile.open(fileobj=byte_object) as sdist_tar:
-            sdist_tar.extractall(filter="data")
+            if hasattr(tarfile, "data_filter"):
+                sdist_tar.extractall(filter="data")
+            else:
+                print(
+                    "You do not have data filters enabled for your Python version.",
+                    "This is a security risk. Please update Python.",
+                    "For more information: https://directorytraversal.zip",
+                    sep="\n",
+                )
+                if input('To ignore this, enter "Y": ').upper() == "Y":
+                    sdist_tar.extractall()
     if filename.endswith((".whl", ".zip")):
         with ZipFile(byte_object) as whl_zip:
             whl_zip.extractall()
