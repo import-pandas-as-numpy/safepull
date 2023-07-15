@@ -94,12 +94,12 @@ def run() -> None:
             distros = user_package.get_distributions()
             print(*distros[0].get_metadata())
             if input("Download package? (Y/N):").lower() == "y":
-                file_name = distros[0].download_package()
-                unpack(file_name)
+                byteobject, file_name = distros[0].download_package()
+                unpack(byteobject, file_name)
     else:
         sdist = user_package.get_sdist()
         if sdist is None:
             print("No sdist found. Grabbing first package.")
             sdist = user_package.get_distributions()[0]
-        file_name = sdist.download_package()
-        unpack(file_name)
+        byteobject, file_name = sdist.download_package()
+        unpack(byteobject, file_name)
