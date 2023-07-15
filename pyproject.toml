@@ -1,24 +1,24 @@
-[project]
+[tool.poetry]
 name = "safepull"
 version = "2.0.4"
-description = "A CLI tool for downloading and extracting packages from PyPI without interfacing with setup.py"
+description = "A CLI tool for downloading and extracting packages from PyPI without interfacing with setup.py."
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
 readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.10"
-dependencies = [
-    "requests>=2.28.2,<2.32.0",
-    "rich~=13.4.2",
-]
 
-[project.urls]
-repository = "https://github.com/import-pandas-as-numpy/safepull/"
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.31.0"
+rich = "^13.4.2"
 
-[project.scripts]
-safepull = "safepull.safepull:run"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.278"
+pre-commit = "^3.3.3"
 
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 target-version = "py311"
