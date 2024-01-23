@@ -6,6 +6,9 @@ authors = ["Rem <128343390+import-pandas-as-numpy@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
 
+[tool.poetry.scripts]
+safepull = "safepull.safepull:run"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 requests = "^2.31.0"
