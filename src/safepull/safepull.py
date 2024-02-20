@@ -36,8 +36,7 @@ def unpack(byte_object: BytesIO, filename: str) -> None:
             else:
                 print(
                     "You do not have data filters enabled for your Python version.",
-                    "This is a security risk. Please update Python.",
-                    "For more information: https://directorytraversal.zip",
+                    "This may present a security risk of path traversal.",
                     sep="\n",
                 )
                 if input('To ignore this, enter "Y": ').upper() == "Y":
