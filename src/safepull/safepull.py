@@ -1,9 +1,11 @@
 """Safepull module for the safe handling of compressed Python scripts."""
+
 # ruff: noqa: T201
 
 import argparse
 import tarfile
 from io import BytesIO
+from pathlib import Path
 from zipfile import ZipFile
 
 import requests
@@ -43,7 +45,7 @@ def unpack(byte_object: BytesIO, filename: str) -> None:
                     sdist_tar.extractall()
     if filename.endswith((".whl", ".zip")):
         with ZipFile(byte_object) as whl_zip:
-            whl_zip.extractall()
+            whl_zip.extractall(path=Path.cwd().joinpath(f"{filename[:-4]}"))
 
 
 def run() -> None:
