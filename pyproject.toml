@@ -16,7 +16,7 @@ rich = "^13.4.2"
 
 
 [tool.poetry.group.dev.dependencies]
-ruff = ">=0.0.278,<0.3.6"
+ruff = ">=0.0.278,<0.4.1"
 pre-commit = "^3.3.3"
 
 [build-system]
