@@ -5,6 +5,7 @@
 import argparse
 import tarfile
 from io import BytesIO
+from os import chdir
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -73,6 +74,12 @@ def run() -> None:
         action="store_true",
         help="Displays metadata on a package.",
     )
+    parser.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Downloads all distributions of a package.",
+    )
     args = parser.parse_args()
 
     use_in = args.package
@@ -80,6 +87,16 @@ def run() -> None:
         use_in = input("Input a package title: ")
 
     user_package = query_package(use_in, args.version)
+
+    if args.all:
+        root_folder = Path(f"{user_package.name}-{user_package.version}/")
+        root_folder.mkdir(exist_ok=True)
+        chdir(root_folder)
+        for distro in user_package.get_distributions():
+            print(f"Downloading {distro.filename}...")
+            byteobject, file_name = distro.download_package()
+            unpack(byteobject, file_name)
+        return
     if args.metadata:
         print(*user_package.get_metadata(), sep="\n")
         return
