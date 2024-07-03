@@ -93,6 +93,7 @@ def run() -> None:
         root_folder.mkdir(exist_ok=True)
         chdir(root_folder)
         for distro in user_package.get_distributions():
+            print(f"Downloading {distro.filename}...")
             byteobject, file_name = distro.download_package()
             unpack(byteobject, file_name)
         return
