@@ -13,6 +13,7 @@ safepull = "safepull.safepull:run"
 python = "^3.10"
 requests = "^2.31.0"
 rich = "^13.4.2"
+humanize = "^4.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
