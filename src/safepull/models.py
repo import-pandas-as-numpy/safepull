@@ -1,8 +1,10 @@
 """Class models used by Safepull."""
+
 from dataclasses import dataclass
 from io import BytesIO
 
 import requests
+from humanize import naturalsize
 from rich.table import Table
 
 
@@ -81,8 +83,8 @@ class Package:
     def table_print(self) -> Table:
         """Rich table printing for distribution information."""
         table = Table(
-            title=f"{self.name} v.{self.version}\nAuthor: {self.author}\n{self.summary}",
-        )  # ruff: noqa: E501
+            title=f"{self.name} v.{self.version}\nAuthor: {self.author}\n{self.summary}",  # noqa: E501
+        )
         table.add_column("Index")
         table.add_column("Filename")
         table.add_column("Package Type")
@@ -92,6 +94,6 @@ class Package:
                 str(ind),
                 entries.filename,
                 entries.packagetype,
-                f"{entries.size / (1 << 20):,.2f}",
+                naturalsize(entries.size),
             )
         return table
