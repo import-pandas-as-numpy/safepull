@@ -3,12 +3,14 @@
 Safepull is a command line tool to interact with PyPI's package indexing to safely download and extract files. This is a targeted replacement for `pip download <package>` to prevent malware detonation within
 setup.py files.
 
-# Installation Instructions
+## Installation Instructions
+
 Safepull is available on PyPI.
 
 `pip install safepull`
 
-# Usage Instructions
+## Usage Instructions
+
 Safepull has four command line arguments.
 
 Positional argument `<packagename>` is required. When force is not specified, you will be prompted for a distribution type to download.
@@ -19,8 +21,9 @@ Positional argument `<packagename>` is required. When force is not specified, yo
 
 `-m --metadata` will return the package name, description, and author of a particular package.
 
+`-a --all` will download *all* distributions of a given package/version combination.
 
-```
+```plaintext
 py -m safepull numpy
                                                   numpy v.1.25.0
                                          Author: Travis E. Oliphant et al.
