@@ -5,6 +5,8 @@ description = "A CLI tool for downloading and extracting packages from PyPI with
 authors = ["Rem <128343390+import-pandas-as-numpy@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://pypi.org/project/safepull/"
+repository = "https://github.com/import-pandas-as-numpy/safepull"
 
 [tool.poetry.scripts]
 safepull = "safepull.safepull:run"
