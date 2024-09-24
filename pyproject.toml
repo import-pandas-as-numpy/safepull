@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "safepull"
-version = "2.2.0"
+version = "2.2.1"
 description = "A CLI tool for downloading and extracting packages from PyPI without interfacing with setup.py."
 authors = ["Rem <128343390+import-pandas-as-numpy@users.noreply.github.com>"]
 license = "MIT"
