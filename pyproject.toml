@@ -19,7 +19,7 @@ humanize = "^4.9.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = ">=0.5.0,<0.6.8"
-pre-commit = "^3.3.3"
+pre-commit = ">=3.3.3,<5.0.0"
 
 [build-system]
 requires = ["poetry-core"]
