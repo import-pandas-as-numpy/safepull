@@ -12,8 +12,14 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+      ci-dependencies:
+        patterns: ["*"]
 
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      python-dependencies:
+        patterns: ["*"]
