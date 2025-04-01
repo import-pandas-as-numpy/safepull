@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from safepull.models import Package
-from safepull.safepull import query_package, run, unpack
+from safepull.safepull import query_package, run, unpack, download_from_url
 
 
 @pytest.fixture()
@@ -100,6 +100,7 @@ def test_run(  # noqa: PLR0913
             force=False,
             metadata=False,
             all=True,
+            url=None,
         ),
     ):
         run()
@@ -119,6 +120,7 @@ def test_run(  # noqa: PLR0913
             force=False,
             metadata=True,
             all=False,
+            url=None,
         ),
     ):
         run()
@@ -133,8 +135,29 @@ def test_run(  # noqa: PLR0913
             force=False,
             metadata=False,
             all=False,
+            url=None,
         ),
     ):
         run()
         mock_console_print.assert_called_once_with("Mocked Table")
         mock_unpack.assert_called_once()
+
+
+@patch("safepull.safepull.download_from_url")
+def test_run_with_url(mock_download_from_url: MagicMock) -> None:
+    """Test the run function with --url flag."""
+    with patch(
+        "argparse.ArgumentParser.parse_args",
+        return_value=argparse.Namespace(
+            package=None,
+            version=None,
+            force=False,
+            metadata=False,
+            all=False,
+            url="https://example.com/example-1.0.0.tar.gz",
+        ),
+    ):
+        run()
+        mock_download_from_url.assert_called_once_with(
+            "https://example.com/example-1.0.0.tar.gz",
+        )
