@@ -23,6 +23,8 @@ Positional argument `<packagename>` is required. When force is not specified, yo
 
 `-a --all` will download *all* distributions of a given package/version combination.
 
+`--url` will download and expand a file directly from the specified URL.
+
 ```plaintext
 py -m safepull numpy
                                                   numpy v.1.25.0
