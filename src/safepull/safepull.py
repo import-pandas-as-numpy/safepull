@@ -49,6 +49,15 @@ def unpack(byte_object: BytesIO, filename: str) -> None:
             whl_zip.extractall(path=Path.cwd().joinpath(f"{filename[:-4]}"))
 
 
+def download_from_url(url: str) -> None:
+    """Download and unpack a file from a URL."""
+    response = requests.get(url, stream=True, timeout=60)
+    response.raise_for_status()
+    filename = url.split("/")[-1]
+    byteobject = BytesIO(response.content)
+    unpack(byteobject, filename)
+
+
 def run() -> None:
     """Run the program."""
     console = Console()
@@ -80,7 +89,15 @@ def run() -> None:
         action="store_true",
         help="Downloads all distributions of a package.",
     )
+    parser.add_argument(
+        "--url",
+        help="Download and expand a file directly from the specified URL.",
+    )
     args = parser.parse_args()
+
+    if args.url:
+        download_from_url(args.url)
+        return
 
     use_in = args.package
     if not args.package:
